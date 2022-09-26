@@ -1,0 +1,471 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <!-- Main -->
+  <main class="container mb-2">
+    <div class="row fs-1 fw-bold text-body my-5">
+      <div class="col text-center ">
+        <div class="d-flex justify-content-center fs-6">
+          <p>Tugas PCD </p>
+          <p class="ms-1">Faizal Abdul Hakim - 201524043</p>
+        </div>
+        <p class="mb-0">Upload An Image To Process</p>
+      </div>
+    </div>
+
+    {% if(message) %}
+    <div class="row mb-3">
+      <label class="fs-2 fw-bold text-danger text-center">{{ message }}</label>
+    </div>
+    {% endif %}
+
+    <div class="row mb-5">
+      <div class="col text-center d-flex justify-content-center align-items-center">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <form action="/index/" method="post" enctype="multipart/form-data" id="formUpload">
+                <div class="d-flex flex-column justify-content-center align-items-center">
+                  <label for="formFileLg" class="form-label fw-bolder"><i class="bi-upload text-primary"></i> Upload Image</label>
+                  <input class="form-control w-75 mb-2" type="file" name="img">
+                  <button type="submit" name="submit" class="btn btn-primary mt-1">Upload</button>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% if(img) %}
+    <!-- Table -->
+    <div class="row">
+      <table class="table-responsive table-bordered">
+        <thead class="text-center">
+          <tr>
+            <th scope="col">Input</th>
+            <th scope="col">Aksi</th>
+            <th scope="col">Output</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="text-center">
+            <td><img src="{{url_for('static', filename=img )}}" style="width: 300px;" class="card-img-top" alt="..."></td>
+            <td>
+              <div class="row">
+                <div class="col m-3">
+
+                  <!-- Extract BGR -->
+                  <form action="/index/extract-BGR/" method="post" enctype="multipart/form-data" id="formExtractBGR">
+                    <input type="hidden" name="img" value="{{ img }}">
+                    <button type="submit" name="submit" class="btn btn-primary m-2">Extract RGB</button>
+                  </form>
+
+                  <!-- Grayscale -->
+                  <form action="/index/grayscale/" method="post" enctype="multipart/form-data" id="formGrayscale">
+                    <input type="hidden" name="img" value="{{ img }}">
+                    <button type="submit" name="submit" class="btn btn-primary m-2">Grayscale</button>
+                  </form>
+
+                  <!-- Grayscale AVG -->
+                  <form action="/index/grayscale-avg/" method="post" enctype="multipart/form-data" id="formGrayscaleAVG">
+                    <input type="hidden" name="img" value="{{ img }}">
+                    <button type="submit" name="submit" class="btn btn-primary m-2">Grayscale AVG</button>
+                  </form>
+
+                  <!-- Detect Shapes -->
+                  <form action="/index/detect-shapes/" method="post" enctype="multipart/form-data" id="formShapes">
+                    <input type="hidden" name="img" value="{{ img }}">
+                    <button type="submit" name="submit" class="btn btn-primary m-2">Detect Shapes</button>
+                  </form>
+
+                  <!-- Inverse -->
+                  <form action="/index/inverse/" method="post" enctype="multipart/form-data" id="formInverse">
+                    <input type="hidden" name="img" value="{{ img }}">
+                    <button type="submit" name="submit" class="btn btn-primary m-2">Inverse</button>
+                  </form>
+
+                  <!-- Crop -->
+                  <form action="/index/crop/" method="post" enctype="multipart/form-data" id="formCrop">
+                    <input type="hidden" name="img" value="{{ img }}">
+                    <!-- Button trigger modal -->
+                    <button type="button" id="btnModal" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#sliderModal">
+                      Crop
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="sliderModal" tabindex="-1" aria-labelledby="sliderModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="sliderModalLabel">Modal title</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                    
+                            <div class="mb-3 d-flex justify-content-start">
+                              <!-- Slider Widht From -->
+                              <div class="mb-1 me-2">
+                                <label for="customRange1" class="form-label">Crop Width From: </label>
+                                <input type="range" class="form-range" min="0" max="100" id="sliderWidthCropFrom" name="widthFrom">
+                                <label class="form-label">Value : </label>
+                                <label class="form-label fw-bold" id="labelValueWidthFrom">0</label> <label>%</label>
+                              </div>
+
+                              <!-- Sldier Width End -->
+                              <div class="mb-1">
+                                <label for="customRange2" class="form-label">Crop Width End: </label>
+                                <input type="range" class="form-range" min="0" max="100" id="sliderWidthCropEnd" name="widthEnd">
+                                <label class="form-label">Value : </label>
+                                <label class="form-label fw-bold" id="labelValueWidthEnd">0</label> <label>%</label>
+                              </div>
+                            </div>
+
+                            <div class="mb-3 d-flex justify-content-start">
+                              <!-- Slider Height From -->
+                              <div class="mb-1 me-2">
+                                <label for="customRange2" class="form-label">Crop Height From: </label>
+                                <input type="range" class="form-range" min="0" max="100" id="sliderHeightCropFrom" name="heightFrom">
+                                <label class="form-label">Value : </label>
+                                <label class="form-label fw-bold" id="labelValueHeightFrom">0</label> <label>%</label>
+                              </div>
+
+                              <!-- Slider Height End -->
+                              <div class="mb-1">
+                                <label for="customRange2" class="form-label">Crop Height End: </label>
+                                <input type="range" class="form-range" min="0" max="100" id="sliderHeightCropEnd" name="heightEnd">
+                                <label class="form-label">Value : </label>
+                                <label class="form-label fw-bold" id="labelValueHeightEnd">0</label> <label>%</label>
+                              </div>
+                            </div>
+
+                            <div class="mb-3 d-flex justify-content-start">
+                              <label class="fst-italic">* Nilai From Harus lebih Kecil dari End</label>
+                            </div>
+                    
+                          </div>
+                          <div class="modal-footer">
+                            <button type="submit" name="submit" class="btn btn-primary m-2">Crop</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </form>
+
+                </div>
+                <div class="col m-3">
+                  <!-- Brightness add CV-->
+                  <form action="/index/brightness-add-cv/" method="post" enctype="multipart/form-data" id="formBrighnessCV">
+                    <input type="hidden" name="img" value="{{ img }}">
+                    <button type="submit" name="submit" class="btn btn-primary m-2">Brightness Add CV</button>
+                  </form>
+
+                  <!-- Brightness add-->
+                  <form action="/index/brightness-add/" method="post" enctype="multipart/form-data" id="formBrighness">
+                    <input type="hidden" name="img" value="{{ img }}">
+                    <button type="submit" name="submit" class="btn btn-primary m-2">Brightness Add</button>
+                  </form>
+
+                  <!-- Brightness subt CV -->
+                  <form action="/index/brightness-subt-cv/" method="post" enctype="multipart/form-data" id="formBrighness2CV">
+                    <input type="hidden" name="img" value="{{ img }}">
+                    <button type="submit" name="submit" class="btn btn-primary m-2">Brightness Subtraction CV</button>
+                  </form>
+
+                  <!-- Brightness subt -->
+                  <form action="/index/brightness-subt/" method="post" enctype="multipart/form-data" id="formBrighness2">
+                    <input type="hidden" name="img" value="{{ img }}">
+                    <button type="submit" name="submit" class="btn btn-primary m-2">Brightness Subtraction</button>
+                  </form>
+
+                  <!-- Brightness mult cv-->
+                  <form action="/index/brightness-mult-cv/" method="post" enctype="multipart/form-data" id="formBrighness3CV">
+                    <input type="hidden" name="img" value="{{ img }}">
+                    <button type="submit" name="submit" class="btn btn-primary m-2">Brightness Multiplication CV</button>
+                  </form>
+
+                  <!-- Brightness mult-->
+                  <form action="/index/brightness-mult/" method="post" enctype="multipart/form-data" id="formBrighness3">
+                    <input type="hidden" name="img" value="{{ img }}">
+                    <button type="submit" name="submit" class="btn btn-primary m-2">Brightness Multiplication</button>
+                  </form>
+
+                  <!-- Brightness div cv-->
+                  <form action="/index/brightness-div-cv/" method="post" enctype="multipart/form-data" id="formBrighness4CV">
+                    <input type="hidden" name="img" value="{{ img }}">
+                    <button type="submit" name="submit" class="btn btn-primary m-2">Brightness Divide CV</button>
+                  </form>
+
+                  <!-- Brightness div-->
+                  <form action="/index/brightness-div/" method="post" enctype="multipart/form-data" id="formBrighness4">
+                    <input type="hidden" name="img" value="{{ img }}">
+                    <button type="submit" name="submit" class="btn btn-primary m-2">Brightness Divide</button>
+                  </form>
+
+                  <!-- Bitwise And -->
+                  <form action="/index/bitwise-and/" method="post" enctype="multipart/form-data" id="formBitwiseAnd">
+                    <input type="hidden" name="img" value="{{ img }}">
+                    <!-- Button trigger modal -->
+                    <button type="button" id="btnModalAnd" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#bitwiseAnd">
+                      Bitwise And
+                    </button>
+                  
+                    <!-- Modal -->
+                    <div class="modal fade" id="bitwiseAnd" tabindex="-1" aria-labelledby="sliderModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="sliderModalLabel">Modal title</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+
+                            <label for="formFileLg" class="form-label fw-bolder"><i class="bi-upload text-primary"></i> Upload Image 2</label>
+                            <input class="form-control w-75 mb-2" type="file" name="img2">
+
+                          </div>
+
+                          <div class="modal-footer">
+                            <button type="submit" name="submit" class="btn btn-primary m-2">Bitwise And</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  
+                  </form>
+
+                  <!-- Bitwise Or -->
+                  <form action="/index/bitwise-or/" method="post" enctype="multipart/form-data" id="formBitwiseOr">
+                    <input type="hidden" name="img" value="{{ img }}">
+                    <!-- Button trigger modal -->
+                    <button type="button" id="btnModalOr" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bitwiseOr">
+                      Bitwise Or
+                    </button>
+                  
+                    <!-- Modal -->
+                    <div class="modal fade" id="bitwiseOr" tabindex="-1" aria-labelledby="sliderModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="sliderModalLabel">Modal title</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+
+                            <label for="formFileLg" class="form-label fw-bolder"><i class="bi-upload text-primary"></i> Upload Image 2</label>
+                            <input class="form-control w-75 mb-2" type="file" name="img2">
+
+                          </div>
+
+                          <div class="modal-footer">
+                            <button type="submit" name="submit" class="btn btn-primary m-2">Bitwise Or</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  
+                  </form>
+
+                  <!-- Bitwise Not-->
+                  <form action="/index/bitwise-not/" method="post" enctype="multipart/form-data" id="formBrighness4">
+                    <input type="hidden" name="img" value="{{ img }}">
+                    <button type="submit" name="submit" class="btn btn-primary m-2">Bitwise Not</button>
+                  </form>
+
+                  <!-- Bitwise Xor -->
+                  <form action="/index/bitwise-xor/" method="post" enctype="multipart/form-data" id="formBitwiseOr">
+                    <input type="hidden" name="img" value="{{ img }}">
+                    <!-- Button trigger modal -->
+                    <button type="button" id="btnModalXor" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bitwiseXor">
+                      Bitwise Xor
+                    </button>
+                  
+                    <!-- Modal -->
+                    <div class="modal fade" id="bitwiseXor" tabindex="-1" aria-labelledby="sliderModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="sliderModalLabel">Modal title</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                  
+                            <label for="formFileLg" class="form-label fw-bolder"><i class="bi-upload text-primary"></i> Upload Image
+                              2</label>
+                            <input class="form-control w-75 mb-2" type="file" name="img2">
+                  
+                          </div>
+                  
+                          <div class="modal-footer">
+                            <button type="submit" name="submit" class="btn btn-primary m-2">Bitwise Or</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          </div>
+                  
+                        </div>
+                      </div>
+                    </div>
+                  
+                  </form>
+
+                </div>
+              </div>
+            </td>
+
+            <!-- Extract BGR -->
+            {% if(extract) %}
+            <td>
+              <p>Data BGR (resized) : </p>
+              <p>{{ extract }}</p>
+            </td>
+            {% endif %}
+
+            <!-- Grayscale -->
+            {% if(grayscale) %}
+            <td>
+              <p>Grayscale : </p>
+              <img src="{{url_for('static', filename=grayscale)}}" style="width: 300px;" class="card-img-top" alt="output">
+            </td>
+            {% endif %}
+
+            <!-- Grayscale AVG-->
+            {% if(grayscale_avg) %}
+            <td>
+              <p>Grayscale AVG : </p>
+              <img src="{{url_for('static', filename=grayscale_avg)}}" style="width: 300px;" class="card-img-top" alt="output">
+            </td>
+            {% endif %}
+
+            <!-- Detect Shapes -->
+            {% if(shapes) %}
+            <td>
+              <p>Shapes : </p>
+              <img src="{{url_for('static', filename=shapes)}}" style="width: 300px;" class="card-img-top" alt="output">
+            </td>
+            {% endif %}
+
+            <!-- Inverse -->
+            {% if(inverse) %}
+            <td>
+              <p>Inverse : </p>
+              <img src="{{url_for('static', filename=inverse)}}" style="width: 300px;" class="card-img-top" alt="output">
+            </td>
+            {% endif %}
+
+            <!-- Crop -->
+            {% if(crop) %}
+            <td>
+              <p>Crop : </p>
+              <img src="{{url_for('static', filename=crop)}}" style="width: 300px;" class="card-img-top" alt="output">
+            </td>
+            {% endif %}
+
+            <!-- Brightness ADD CV -->
+            {% if(brightness_cv_add) %}
+            <td>
+              <p>Brightness Add CV : </p>
+              <img src="{{url_for('static', filename=brightness_cv_add)}}" style="width: 300px;" class="card-img-top" alt="output">
+            </td>
+            {% endif %}
+
+            <!-- Brightness ADD -->
+            {% if(brightness_add) %}
+            <td>
+              <p>Brightness Add : </p>
+              <img src="{{url_for('static', filename=brightness_add)}}" style="width: 300px;" class="card-img-top" alt="output">
+            </td>
+            {% endif %}
+
+            <!-- Brightness Subt CV -->
+            {% if(brightness_subt_cv) %}
+            <td>
+              <p>Brightness Subt CV : </p>
+              <img src="{{url_for('static', filename=brightness_subt_cv)}}" style="width: 300px;" class="card-img-top" alt="output">
+            </td>
+            {% endif %}
+
+            <!-- Brightness Subt -->
+            {% if(brightness_subt) %}
+            <td>
+              <p>Brightness Subt : </p>
+              <img src="{{url_for('static', filename=brightness_subt)}}" style="width: 300px;" class="card-img-top" alt="output">
+            </td>
+            {% endif %}
+
+            <!-- Brightness Mult CV -->
+            {% if(brightness_mult_cv) %}
+            <td>
+              <p>Brightness Mult CV : </p>
+              <img src="{{url_for('static', filename=brightness_mult_cv)}}" style="width: 300px;" class="card-img-top" alt="output">
+            </td>
+            {% endif %}
+
+            <!-- Brightness Mult-->
+            {% if(brightness_mult) %}
+            <td>
+              <p>Brightness Mult : </p>
+              <img src="{{url_for('static', filename=brightness_mult)}}" style="width: 300px;" class="card-img-top" alt="output">
+            </td>
+            {% endif %}
+
+            <!-- Brightness div CV -->
+            {% if(brightness_div_cv) %}
+            <td>
+              <p>Brightness Div CV : </p>
+              <img src="{{url_for('static', filename=brightness_div_cv)}}" style="width: 300px;" class="card-img-top" alt="output">
+            </td>
+            {% endif %}
+
+            <!-- Brightness div-->
+            {% if(brightness_div) %}
+            <td>
+              <p>Brightness Div : </p>
+              <img src="{{url_for('static', filename=brightness_div)}}" style="width: 300px;" class="card-img-top" alt="output">
+            </td>
+            {% endif %}
+
+            <!-- Bitwise and-->
+            {% if(bitwise_and) %}
+            <td>
+              <p>Bitwise And : </p>
+              <img src="{{url_for('static', filename=bitwise_and)}}" style="width: 300px;" class="card-img-top" alt="output">
+            </td>
+            {% endif %}
+
+            <!-- Bitwise or-->
+            {% if(bitwise_or) %}
+            <td>
+              <p>Bitwise Or : </p>
+              <img src="{{url_for('static', filename=bitwise_or)}}" style="width: 300px;" class="card-img-top" alt="output">
+            </td>
+            {% endif %}
+
+            <!-- Bitwise not-->
+            {% if(bitwise_not) %}
+            <td>
+              <p>Bitwise Not : </p>
+              <img src="{{url_for('static', filename=bitwise_not)}}" style="width: 300px;" class="card-img-top" alt="output">
+            </td>
+            {% endif %}
+
+            <!-- Bitwise xor-->
+            {% if(bitwise_xor) %}
+            <td>
+              <p>Bitwise Xor : </p>
+              <img src="{{url_for('static', filename=bitwise_xor)}}" style="width: 300px;" class="card-img-top" alt="output">
+            </td>
+            {% endif %}
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+
+
+
+  </main>
+{% endblock %}
